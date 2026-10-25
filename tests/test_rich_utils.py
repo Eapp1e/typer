@@ -5,7 +5,7 @@ import typer
 import typer.completion
 from typer.testing import CliRunner
 
-from tests.utils import needs_rich
+from tests.utils import needs_rich, normalize_rich_output
 
 runner = CliRunner()
 
@@ -298,3 +298,18 @@ def test_rich_lowercase_bracketed_metavar() -> None:
     usage_line = result.output.splitlines()[0]
     assert usage_line.startswith("Usage: typer [path_or_module] run [OPTIONS] {name}")
     assert "Try 'typer [path_or_module] run --help' for help." in result.output
+
+
+@needs_rich
+def test_rich_utils_show_default_empty_string() -> None:
+    app = typer.Typer()
+
+    @app.command()
+    def main(
+        name: str = typer.Option("", help="Name to greet", show_default=True)
+    ) -> None:
+        print(f"Hello {name}")
+
+    result = runner.invoke(app, ["--help"])
+    assert result.exit_code == 0
+    assert '[default: ""]' in normalize_rich_output(result.stdout)
