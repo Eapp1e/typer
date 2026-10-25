@@ -306,7 +306,7 @@ def test_rich_utils_show_default_empty_string() -> None:
 
     @app.command()
     def main(
-        name: str = typer.Option("", help="Name to greet", show_default=True)
+        name: str = typer.Option("", help="Name to greet", show_default=True),
     ) -> None:
         print(f"Hello {name}")
 
